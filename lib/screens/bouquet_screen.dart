@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../data/dummy_bouquets.dart';
 import '../widgets/bouquet_item.dart';
 import '../models/flower_model.dart';
-import '../providers/cart_provider.dart';
+import '../utils/cart_manager.dart';
 import '../models/cart_item_model.dart';
 
-class BouquetScreen extends StatelessWidget {
+class BouquetScreen extends StatefulWidget {
   const BouquetScreen({super.key});
+
+  @override
+  State<BouquetScreen> createState() => _BouquetScreenState();
+}
+
+class _BouquetScreenState extends State<BouquetScreen> {
+  void _refreshCart() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +23,6 @@ class BouquetScreen extends StatelessWidget {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     final FlowerModel flower = data['flower'];
     final String color = data['color'];
-    final cart = Provider.of<CartProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -27,10 +34,13 @@ class BouquetScreen extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.shopping_cart),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/cart');
+                  Navigator.pushNamed(
+                    context,
+                    '/cart',
+                  ).then((_) => _refreshCart());
                 },
               ),
-              if (cart.itemCount > 0)
+              if (CartManager.itemCount > 0)
                 Positioned(
                   right: 8,
                   top: 8,
@@ -45,11 +55,8 @@ class BouquetScreen extends StatelessWidget {
                       minHeight: 16,
                     ),
                     child: Text(
-                      cart.itemCount.toString(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                      ),
+                      CartManager.itemCount.toString(),
+                      style: const TextStyle(color: Colors.white, fontSize: 10),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -124,10 +131,12 @@ class BouquetScreen extends StatelessWidget {
                         color: color,
                         occasion: bouquet.name,
                       );
-                      cart.addItem(cartItem);
+                      CartManager.addItem(cartItem);
 
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('تم إضافة ${bouquet.name} للسلة')),
+                        SnackBar(
+                          content: Text('تم إضافة ${bouquet.name} للسلة'),
+                        ),
                       );
 
                       // Navigate to extras
@@ -145,7 +154,7 @@ class BouquetScreen extends StatelessWidget {
                 },
               ),
             ),
-            if (cart.itemCount > 0)
+            if (CartManager.itemCount > 0)
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -162,7 +171,7 @@ class BouquetScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "${cart.itemCount} منتج - \$${cart.totalAmount.toStringAsFixed(2)}",
+                      "${CartManager.itemCount} منتج - \$${CartManager.totalAmount.toStringAsFixed(2)}",
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -171,10 +180,16 @@ class BouquetScreen extends StatelessWidget {
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.pink,
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/cart');
+                        Navigator.pushNamed(
+                          context,
+                          '/cart',
+                        ).then((_) => _refreshCart());
                       },
                       child: const Text(
                         "عرض السلة",

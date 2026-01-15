@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/extra_model.dart';
-
+import '../models/cart_item_model.dart';
+import '../utils/cart_manager.dart';
 
 class ExtrasScreen extends StatelessWidget {
   ExtrasScreen({Key? key}) : super(key: key);
@@ -12,16 +13,8 @@ class ExtrasScreen extends StatelessWidget {
       price: 5.0,
       image: "assets/images/chocolate.jpg",
     ),
-    ExtraModel(
-      name: "بطاقة تهنئة",
-      price: 2.0,
-      image: "assets/images/card.jpg",
-    ),
-    ExtraModel(
-      name: "هدية صغيرة",
-      price: 8.0,
-      image: "assets/images/gift.jpg",
-    ),
+    ExtraModel(name: "بكج مميز", price: 2.0, image: "assets/images/card.jpg"),
+    ExtraModel(name: "هدية صغيرة", price: 8.0, image: "assets/images/gift.jpg"),
   ];
 
   @override
@@ -31,6 +24,39 @@ class ExtrasScreen extends StatelessWidget {
         title: const Text("الطلبات الإضافية"),
         centerTitle: true,
         backgroundColor: Colors.pink.shade400,
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/cart');
+                },
+              ),
+              if (CartManager.itemCount > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      CartManager.itemCount.toString(),
+                      style: const TextStyle(color: Colors.white, fontSize: 10),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
@@ -71,7 +97,18 @@ class ExtrasScreen extends StatelessWidget {
                   color: Colors.pink,
                 ),
                 onTap: () {
-                  // لاحقاً → إضافة للـ cart أو الانتقال للسلة
+                  final cartItem = CartItem(
+                    id: 'extra_${extra.name}',
+                    type: 'extra',
+                    name: extra.name,
+                    image: extra.image,
+                    price: extra.price,
+                  );
+                  CartManager.addItem(cartItem);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('تم إضافة ${extra.name} للسلة')),
+                  );
+                  Navigator.pushNamed(context, '/cart');
                 },
               ),
             );

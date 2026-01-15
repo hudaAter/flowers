@@ -1,18 +1,62 @@
 import 'package:flutter/material.dart';
 import '../data/dummy_flowers.dart';
 import '../models/flower_model.dart';
+import '../utils/cart_manager.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  void _refreshCart() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     // backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text('متجر الورود'),
         centerTitle: true,
-       // backgroundColor: AppColors.primary,
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/cart',
+                  ).then((_) => _refreshCart());
+                },
+              ),
+              if (CartManager.itemCount > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      CartManager.itemCount.toString(),
+                      style: const TextStyle(color: Colors.white, fontSize: 10),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
       ),
       body: GridView.builder(
         padding: const EdgeInsets.all(12),
@@ -30,9 +74,7 @@ class HomeScreen extends StatelessWidget {
               Navigator.pushNamed(
                 context,
                 '/color_selection', // صفحة اختيار اللون
-                arguments: {
-                  'flower': flower,
-                },
+                arguments: {'flower': flower},
               );
             },
             child: Container(
@@ -62,7 +104,7 @@ class HomeScreen extends StatelessWidget {
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                     // color: AppColors.textPrimary,
+                      // color: AppColors.textPrimary,
                     ),
                   ),
                   Text(

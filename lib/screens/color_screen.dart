@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import '../models/flower_model.dart';
 import '../utils/app_colors.dart';
+import '../utils/cart_manager.dart';
 
-class ColorScreen extends StatelessWidget {
+class ColorScreen extends StatefulWidget {
   const ColorScreen({super.key});
+
+  @override
+  State<ColorScreen> createState() => _ColorScreenState();
+}
+
+class _ColorScreenState extends State<ColorScreen> {
+  void _refreshCart() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +31,42 @@ class ColorScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("اختر لون الوردة"),
         backgroundColor: AppColors.primary,
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/cart',
+                  ).then((_) => _refreshCart());
+                },
+              ),
+              if (CartManager.itemCount > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      CartManager.itemCount.toString(),
+                      style: const TextStyle(color: Colors.white, fontSize: 10),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
@@ -42,8 +88,7 @@ class ColorScreen extends StatelessWidget {
             // اسم الوردة
             Text(
               flower.name,
-              style: const TextStyle(
-                  fontSize: 22, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 20),
@@ -56,8 +101,10 @@ class ColorScreen extends StatelessWidget {
                 return ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.secondary,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -66,7 +113,7 @@ class ColorScreen extends StatelessWidget {
                     // الانتقال لصفحة البوكيه مع تمرير الوردة واللون
                     Navigator.pushNamed(
                       context,
-                      "/bouquet_screen",
+                      "/bouquet",
                       arguments: {"flower": flower, "color": color},
                     );
                   },

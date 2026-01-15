@@ -4,7 +4,7 @@ List<BouquetModel> bouquetsData = [
   BouquetModel(
     id: "1",
     name: "بوكيه الورد الأحمر",
-    image: "assets/images/bouquet1.jpg",
+    image: "assets/images/bouquet1.jpeg",
     price: 25.0,
     count: 12,
     occasion: "عيد ميلاد",
